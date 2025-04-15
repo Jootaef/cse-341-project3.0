@@ -1,7 +1,6 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
-const swaggerAutogen = require('swagger-autogen')(); // Importa swagger-autogen
 const swaggerUi = require("swagger-ui-express");
 const mongodb = require("./db/database");
 const mainRouter = require("./routes/index");
@@ -19,19 +18,6 @@ const doc = {
   basePath: "/",
   schemes: ['http']
 };
-
-// Definir las rutas de tus archivos para que swagger-autogen pueda generar el archivo swagger.json
-const outputFile = './swagger.json';
-const endpointsFiles = ['./routes/index.js']; // Asegúrate de que las rutas estén bien definidas
-
-// Generar el archivo swagger.json
-swaggerAutogen(outputFile, endpointsFiles, doc)
-  .then(() => {
-    console.log('✅ Swagger file generated successfully!');
-  })
-  .catch((err) => {
-    console.error('❌ Error generating Swagger file:', err);
-  });
 
 const app = express();
 

@@ -7,6 +7,7 @@ const getAllEmployees = async (req, res) => {
     const result = await db.getDatabase().collection("employees").find().toArray();
     res.status(200).json(result);
   } catch (error) {
+    console.error("❌ Error retrieving employees:", error);
     res.status(500).json({ message: "Failed to retrieve employees", error });
   }
 };
@@ -18,6 +19,7 @@ const getEmployeeById = async (req, res) => {
     if (!result) return res.status(404).json({ message: "Employee not found" });
     res.status(200).json(result);
   } catch (error) {
+    console.error("❌ Error retrieving employee:", error);
     res.status(500).json({ message: "Failed to retrieve employee", error });
   }
 };
@@ -33,7 +35,6 @@ const createEmployee = async (req, res) => {
     return res.status(400).json({ message: "❌ Email is required and cannot be empty" });
   }
 
-  // Crear el nuevo empleado
   const newEmployee = {
     firstName,
     lastName,
@@ -55,7 +56,7 @@ const createEmployee = async (req, res) => {
     res.status(201).json({ message: "Employee created", id: response.insertedId });
   } catch (error) {
     console.error("❌ Error creating employee:", error);
-    res.status(500).json({ message: "Failed to create employee", error });
+    res.status(500).json({ message: "Failed to create employee", error: error.message });
   }
 };
 
@@ -106,6 +107,7 @@ const deleteEmployee = async (req, res) => {
     if (result.deletedCount === 0) return res.status(404).json({ message: "Employee not found" });
     res.status(200).json({ message: "Employee deleted" });
   } catch (error) {
+    console.error("❌ Error deleting employee:", error);
     res.status(500).json({ message: "Failed to delete employee", error });
   }
 };

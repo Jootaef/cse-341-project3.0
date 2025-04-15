@@ -9,7 +9,6 @@ const dbName = 'project3';
 const initDb = async (callback) => {
   const uri = process.env.MONGO_URI;
 
-  // Verificar si la variable de entorno está definida
   if (!uri) {
     return callback('❌ MONGO_URI is missing in .env');
   }
@@ -18,7 +17,7 @@ const initDb = async (callback) => {
 
   try {
     await client.connect();
-    db = client.db(dbName); 
+    db = client.db(dbName);
     console.log(`✅ Connected to MongoDB: ${dbName}`);
     callback();
   } catch (err) {
@@ -27,6 +26,7 @@ const initDb = async (callback) => {
   }
 };
 
+// Esta función devuelve la base de datos
 const getDatabase = () => {
   if (!db) {
     throw new Error('❌ Database not initialized. Call initDb first.');
@@ -34,7 +34,7 @@ const getDatabase = () => {
   return db;
 };
 
-// Cerrar la conexión cuando el proceso termine
+// Esta función se usa para cerrar la conexión cuando sea necesario
 const closeDbConnection = async () => {
   if (db) {
     await db.client.close();
@@ -42,8 +42,19 @@ const closeDbConnection = async () => {
   }
 };
 
+// Función adicional para crear el índice único para el campo 'email'
+const createEmailIndex = async () => {
+  try {
+    await db.collection('employees').createIndex({ email: 1 }, { unique: true });
+    console.log('✅ Index on email created');
+  } catch (err) {
+    console.error('❌ Error creating index:', err);
+  }
+};
+
 module.exports = {
   initDb,
   getDatabase,
-  closeDbConnection
+  closeDbConnection,
+  createEmailIndex, // Puedes llamar esta función para crear el índice
 };
