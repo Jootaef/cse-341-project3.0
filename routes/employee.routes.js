@@ -1,25 +1,35 @@
-const express = require("express");
+const express = require('express');
 const router = express.Router();
-
-// Simulación de base de datos para empleados (esto puede ser reemplazado por MongoDB)
-let employees = [];
+const { getDatabase } = require('../db/database');
 
 // Crear un nuevo empleado
-router.post("/", (req, res) => {
+router.post("/", async (req, res) => {
   const { firstName, lastName, departmentId, jobTitle, salary } = req.body;
-
-  if (!firstName || !lastName || !departmentId || !jobTitle || salary === undefined) {
-    return res.status(400).json({ message: "❌ Missing required fields" });
+  const db = getDatabase();
+  
+  try {
+    const collection = db.collection('employees');
+    const newEmployee = { firstName, lastName, departmentId, jobTitle, salary };
+    
+    // Insertar el nuevo empleado
+    const result = await collection.insertOne(newEmployee);
+    res.status(201).json({ message: "✅ Employee created successfully", employee: result.ops[0] });
+  } catch (error) {
+    res.status(500).json({ message: "❌ Error creating employee", error });
   }
-
-  const newEmployee = { firstName, lastName, departmentId, jobTitle, salary };
-  employees.push(newEmployee);
-  res.status(201).json({ message: "✅ Employee created successfully", employee: newEmployee });
 });
 
 // Obtener todos los empleados
-router.get("/", (req, res) => {
-  res.status(200).json({ employees });
+router.get("/", async (req, res) => {
+  const db = getDatabase();
+  
+  try {
+    const collection = db.collection('employees');
+    const employees = await collection.find().toArray();
+    res.status(200).json(employees);
+  } catch (error) {
+    res.status(500).json({ message: "❌ Error retrieving employees", error });
+  }
 });
 
 module.exports = router;

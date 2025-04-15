@@ -4,7 +4,7 @@ dotenv.config();
 
 let db;
 
-const dbName = 'project2';
+const dbName = 'project3';
 
 const initDb = async (callback) => {
   const uri = process.env.MONGO_URI;
