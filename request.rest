@@ -1,0 +1,65 @@
+### ✅ Root Test (Should return "API is running.")
+GET http://localhost:3000/
+
+### 📦 Get All Employees
+GET http://localhost:3000/employees
+
+### 🔍 Get a Single Employee by ID
+GET http://localhost:3000/employees/PUT_AN_EXISTING_EMPLOYEE_ID_HERE
+
+### ➕ Create a New Employee
+POST http://localhost:3000/employees
+Content-Type: application/json
+
+{
+  "firstName": "Carlos",
+  "lastName": "Mendoza",
+  "email": "carlos.mendoza@example.com",
+  "position": "Software Developer",
+  "salary": 5000,
+  "departmentId": "PUT_AN_EXISTING_DEPARTMENT_ID_HERE"
+}
+
+### ✏️ Update Existing Employee
+PUT http://localhost:3000/employees/PUT_AN_EXISTING_EMPLOYEE_ID_HERE
+Content-Type: application/json
+
+{
+  "firstName": "Carlos",
+  "lastName": "Mendoza",
+  "email": "carlos.mendez@example.com",
+  "position": "Senior Developer",
+  "salary": 6000,
+  "departmentId": "PUT_AN_EXISTING_DEPARTMENT_ID_HERE"
+}
+
+### ❌ Delete an Employee
+DELETE http://localhost:3000/employees/PUT_AN_EXISTING_EMPLOYEE_ID_HERE
+
+
+### 📦 Get All Departments
+GET http://localhost:3000/departments
+
+### 🔍 Get a Single Department by ID
+GET http://localhost:3000/departments/PUT_AN_EXISTING_DEPARTMENT_ID_HERE
+
+### ➕ Create a New Department
+POST http://localhost:3000/departments
+Content-Type: application/json
+
+{
+  "departmentName": "Engineering",
+  "manager": "Juan Pérez"
+}
+
+### ✏️ Update Existing Department
+PUT http://localhost:3000/departments/PUT_AN_EXISTING_DEPARTMENT_ID_HERE
+Content-Type: application/json
+
+{
+  "departmentName": "Software Development",
+  "manager": "Ana González"
+}
+
+### ❌ Delete a Department
+DELETE http://localhost:3000/departments/PUT_AN_EXISTING_DEPARTMENT_ID_HERE

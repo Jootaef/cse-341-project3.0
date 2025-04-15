@@ -1,16 +1,21 @@
-const swaggerJSDoc = require('swagger-jsdoc');
+const swaggerAutogen = require('swagger-autogen')();
 
-const options = {
-  definition: {
-    openapi: '3.0.0',
-    info: {
-      title: 'Employee & Department API',
-      version: '1.0.0',
-      description: 'API for managing employees and departments',
-    },
+const doc = {
+  info: {
+    title: 'Inventory API',
+    description: 'This documentation describes the available endpoints for managing employees and departments.'
   },
-  apis: ['./routes/*.js'],
+  host: 'localhost:3000',
+  schemes: ['http']
 };
 
-const swaggerSpec = swaggerJSDoc(options);
-module.exports = swaggerSpec;
+const outputFile = './swagger.json';
+const endpointsFiles = ['./routes/index.js'];
+
+swaggerAutogen(outputFile, endpointsFiles, doc)
+  .then(() => {
+    console.log('✅ Swagger file generated successfully!');
+  })
+  .catch((err) => {
+    console.error('❌ Error generating Swagger file:', err);
+  });

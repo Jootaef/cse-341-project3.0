@@ -1,20 +1,25 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const controller = require('../controllers/department.controller');
 
-/**
- * @swagger
- * /api/departments:
- *   get:
- *     summary: Get all departments
- *     responses:
- *       200:
- *         description: List of departments
- */
-router.get('/', controller.getAllDepartments);
-router.get('/:id', controller.getDepartmentById);
-router.post('/', controller.createDepartment);
-router.put('/:id', controller.updateDepartment);
-router.delete('/:id', controller.deleteDepartment);
+// Simulación de base de datos para departamentos
+let departments = [];
+
+// Crear un nuevo departamento
+router.post("/", (req, res) => {
+  const { name, description } = req.body;
+
+  if (!name || !description) {
+    return res.status(400).json({ message: "❌ Missing required fields" });
+  }
+
+  const newDepartment = { name, description };
+  departments.push(newDepartment);
+  res.status(201).json({ message: "✅ Department created successfully", department: newDepartment });
+});
+
+// Obtener todos los departamentos
+router.get("/", (req, res) => {
+  res.status(200).json({ departments });
+});
 
 module.exports = router;

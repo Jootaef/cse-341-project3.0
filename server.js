@@ -1,24 +1,61 @@
-const express = require('express');
-const mongoose = require('mongoose');
-const cors = require('cors');
-require('dotenv').config();
+const express = require("express");
+const bodyParser = require("body-parser");
+const cors = require("cors");
+const swaggerAutogen = require('swagger-autogen')(); // Importa swagger-autogen
+const swaggerUi = require("swagger-ui-express");
+const mongodb = require("./db/database");
+const mainRouter = require("./routes/index");
 
-const employeeRoutes = require('./routes/employee.routes');
-const departmentRoutes = require('./routes/department.routes');
-const swaggerUi = require('swagger-ui-express');
-const swaggerSpec = require('./swagger');
+const port = process.env.PORT || 3000;
+
+// Define la configuración de Swagger
+const doc = {
+  info: {
+    title: 'Inventory API',
+    description: 'This documentation describes the available endpoints for managing employees and departments.',
+    version: "1.0.0"
+  },
+  host: 'localhost:3000',
+  basePath: "/",
+  schemes: ['http']
+};
+
+// Definir las rutas de tus archivos para que swagger-autogen pueda generar el archivo swagger.json
+const outputFile = './swagger.json';
+const endpointsFiles = ['./routes/index.js']; // Asegúrate de que las rutas estén bien definidas
+
+// Generar el archivo swagger.json
+swaggerAutogen(outputFile, endpointsFiles, doc)
+  .then(() => {
+    console.log('✅ Swagger file generated successfully!');
+  })
+  .catch((err) => {
+    console.error('❌ Error generating Swagger file:', err);
+  });
 
 const app = express();
-app.use(cors());
-app.use(express.json());
 
-app.use('/api/employees', employeeRoutes);
-app.use('/api/departments', departmentRoutes);
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+// Middleware
+app
+  .use(bodyParser.json())  // Middleware para analizar el cuerpo de las solicitudes JSON
+  .use(cors({ origin: "*", methods: ["GET", "POST", "PUT", "DELETE"] })) // Configuración CORS
+  .use("/", mainRouter); // Rutas principales
 
-const PORT = process.env.PORT || 3000;
-mongoose.connect(process.env.MONGO_URI)
-  .then(() => {
-    app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
-  })
-  .catch((err) => console.error('Mongo connection failed:', err));
+// Rutas de Swagger (asegurarse de servir la documentación en /api-docs)
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(require("./swagger.json")));
+
+// Inicializa la base de datos
+mongodb.initDb((err) => {
+  if (err) {
+    console.error("❌ Failed to connect to MongoDB", err);
+  } else {
+    console.log(`✅ MongoDB connected - Server running on port ${port}`);
+  }
+});
+
+// Inicia el servidor
+app.listen(port, () => {
+  console.log(`🚀 Web server running at http://localhost:${port}`);
+});
+
+module.exports = app;
