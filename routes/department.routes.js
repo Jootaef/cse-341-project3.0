@@ -1,29 +1,32 @@
 const express = require("express");
 const router = express.Router();
 
-let departments = [];
+let departments = []; // Base de datos en memoria
 
-// Obtener todos los departamentos
+// 🔍 GET - Obtener todos los departamentos
 router.get("/", (req, res) => {
   res.status(200).json({ departments });
 });
 
-// Crear un nuevo departamento
+// ➕ POST - Crear un nuevo departamento
 router.post("/", (req, res) => {
   const { name, description } = req.body;
+
   if (!name || !description) {
     return res.status(400).json({ message: "❌ Missing required fields: name and description" });
   }
+
   const newDepartment = {
     id: departments.length + 1,
     name,
     description
   };
+
   departments.push(newDepartment);
   res.status(201).json({ message: "✅ Department created", department: newDepartment });
 });
 
-// ✅ Actualizar un departamento por ID
+// ✏️ PUT - Actualizar un departamento por ID
 router.put("/:id", (req, res) => {
   const id = parseInt(req.params.id);
   const { name, description } = req.body;
@@ -41,11 +44,15 @@ router.put("/:id", (req, res) => {
   res.status(200).json({ message: "✅ Department updated", department: departments[index] });
 });
 
-// Eliminar un departamento por ID
+// 🗑️ DELETE - Eliminar un departamento por ID
 router.delete("/:id", (req, res) => {
   const id = parseInt(req.params.id);
   const index = departments.findIndex(dep => dep.id === id);
-  if (index === -1) return res.status(404).json({ message: "❌ Department not found" });
+
+  if (index === -1) {
+    return res.status(404).json({ message: "❌ Department not found" });
+  }
+
   const deleted = departments.splice(index, 1);
   res.status(200).json({ message: "✅ Department deleted", department: deleted[0] });
 });
