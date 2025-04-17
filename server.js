@@ -4,22 +4,54 @@ const cors = require("cors");
 const swaggerUi = require("swagger-ui-express");
 const mongodb = require("./db/database");
 const mainRouter = require("./routes/index");
+const session = require("express-session");
+const passport = require("passport");
+const GithubStrategy = require("passport-github2").Strategy;
 require("dotenv").config();
 
 const app = express();
 const port = process.env.PORT || 3000;
 
-// Middleware
+// 🧠 Session setup
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET || "supersecret",
+    resave: false,
+    saveUninitialized: true,
+  })
+);
+
+// 🔐 Passport OAuth config
+passport.use(
+  new GithubStrategy(
+    {
+      clientID: process.env.GITHUB_CLIENT_ID,
+      clientSecret: process.env.GITHUB_CLIENT_SECRET,
+      callbackURL: process.env.CALLBACK_URL,
+    },
+    function (accessToken, refreshToken, profile, done) {
+      return done(null, profile);
+    }
+  )
+);
+
+passport.serializeUser((user, done) => done(null, user));
+passport.deserializeUser((user, done) => done(null, user));
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+// 🌐 Middleware
 app.use(cors({ origin: "*", methods: ["GET", "POST", "PUT", "DELETE"] }));
 app.use(bodyParser.json());
 
-// Rutas de la API
+// 📦 Main API routes
 app.use("/", mainRouter);
 
-// Documentación Swagger
+// 📄 Swagger documentation
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(require("./swagger.json")));
 
-// Conexión a MongoDB
+// 📡 Connect to MongoDB and start server
 mongodb.initDb((err) => {
   if (err) {
     console.error("❌ Failed to connect to MongoDB", err);
