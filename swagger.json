@@ -288,7 +288,7 @@
         ],
         "responses": {
           "201": {
-            "description": "Item created"
+            "description": "Created"
           },
           "400": {
             "description": "Bad Request"
@@ -301,7 +301,7 @@
     },
     "/items/{id}": {
       "get": {
-        "description": "Get an item by ID",
+        "description": "Get item by ID",
         "parameters": [
           {
             "name": "id",
@@ -326,7 +326,7 @@
         }
       },
       "put": {
-        "description": "Update an item by ID",
+        "description": "Update item by ID",
         "parameters": [
           {
             "name": "id",
@@ -358,7 +358,7 @@
         }
       },
       "delete": {
-        "description": "Delete an item by ID",
+        "description": "Delete item by ID",
         "parameters": [
           {
             "name": "id",
@@ -411,7 +411,7 @@
         ],
         "responses": {
           "201": {
-            "description": "User created"
+            "description": "Created"
           },
           "400": {
             "description": "Bad Request"
@@ -424,7 +424,7 @@
     },
     "/users/{id}": {
       "get": {
-        "description": "Get a user by ID",
+        "description": "Get user by ID",
         "parameters": [
           {
             "name": "id",
@@ -449,7 +449,7 @@
         }
       },
       "put": {
-        "description": "Update a user by ID",
+        "description": "Update user by ID",
         "parameters": [
           {
             "name": "id",
@@ -481,7 +481,7 @@
         }
       },
       "delete": {
-        "description": "Delete a user by ID",
+        "description": "Delete user by ID",
         "parameters": [
           {
             "name": "id",
@@ -568,7 +568,7 @@
         },
         "sellingPrice": {
           "type": "number",
-          "example": 2.0
+          "example": 2
         },
         "expirationDate": {
           "type": "string",
@@ -581,23 +581,23 @@
       "properties": {
         "firstName": {
           "type": "string",
-          "example": "Alice"
+          "example": "Jane"
         },
         "lastName": {
           "type": "string",
-          "example": "Johnson"
+          "example": "Doe"
         },
         "email": {
           "type": "string",
-          "example": "alice@example.com"
+          "example": "jane.doe@example.com"
         },
         "favoriteColor": {
           "type": "string",
-          "example": "Blue"
+          "example": "blue"
         },
         "birthday": {
           "type": "string",
-          "example": "1990-05-20"
+          "example": "1990-01-01"
         }
       }
     }
