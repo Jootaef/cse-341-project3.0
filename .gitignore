@@ -1,0 +1,5 @@
+git ls-files | grep .env
+
+node_modules/
+.env
+.DS_Store
