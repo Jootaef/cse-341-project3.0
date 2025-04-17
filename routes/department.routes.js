@@ -1,60 +1,113 @@
 const express = require("express");
+const { ObjectId } = require("mongodb");
+const { getDatabase } = require("../db/database");
 const router = express.Router();
 
-let departments = []; // Base de datos en memoria
-
-// 🔍 GET - Obtener todos los departamentos
-router.get("/", (req, res) => {
-  res.status(200).json({ departments });
+// 📄 GET - Retrieve all departments
+router.get("/", async (req, res) => {
+  try {
+    const db = getDatabase();
+    const departments = await db.collection("departments").find().toArray();
+    res.status(200).json(departments);
+  } catch (error) {
+    res.status(500).json({ message: "❌ Error retrieving departments", error });
+  }
 });
 
-// ➕ POST - Crear un nuevo departamento
-router.post("/", (req, res) => {
+// 🔍 GET - Retrieve a department by ID
+router.get("/:id", async (req, res) => {
+  const id = req.params.id;
+
+  if (!ObjectId.isValid(id)) {
+    return res.status(400).json({ message: "❌ Invalid department ID" });
+  }
+
+  try {
+    const db = getDatabase();
+    const department = await db.collection("departments").findOne({ _id: new ObjectId(id) });
+
+    if (!department) {
+      return res.status(404).json({ message: "❌ Department not found" });
+    }
+
+    res.status(200).json(department);
+  } catch (error) {
+    res.status(500).json({ message: "❌ Error retrieving department", error });
+  }
+});
+
+// ➕ POST - Create a new department
+router.post("/", async (req, res) => {
   const { name, description } = req.body;
 
   if (!name || !description) {
     return res.status(400).json({ message: "❌ Missing required fields: name and description" });
   }
 
-  const newDepartment = {
-    id: departments.length + 1,
-    name,
-    description
-  };
+  try {
+    const db = getDatabase();
+    const newDepartment = { name, description };
+    const result = await db.collection("departments").insertOne(newDepartment);
 
-  departments.push(newDepartment);
-  res.status(201).json({ message: "✅ Department created", department: newDepartment });
+    res.status(201).json({
+      message: "✅ Department created successfully",
+      department: { ...newDepartment, _id: result.insertedId }
+    });
+  } catch (error) {
+    res.status(500).json({ message: "❌ Error creating department", error });
+  }
 });
 
-// ✏️ PUT - Actualizar un departamento por ID
-router.put("/:id", (req, res) => {
-  const id = parseInt(req.params.id);
+// ✏️ PUT - Update a department by ID
+router.put("/:id", async (req, res) => {
+  const id = req.params.id;
   const { name, description } = req.body;
 
-  const index = departments.findIndex(dep => dep.id === id);
-  if (index === -1) {
-    return res.status(404).json({ message: "❌ Department not found" });
+  if (!ObjectId.isValid(id)) {
+    return res.status(400).json({ message: "❌ Invalid department ID" });
   }
 
   if (!name || !description) {
     return res.status(400).json({ message: "❌ Both name and description are required" });
   }
 
-  departments[index] = { id, name, description };
-  res.status(200).json({ message: "✅ Department updated", department: departments[index] });
+  try {
+    const db = getDatabase();
+    const result = await db.collection("departments").updateOne(
+      { _id: new ObjectId(id) },
+      { $set: { name, description } }
+    );
+
+    if (result.matchedCount === 0) {
+      return res.status(404).json({ message: "❌ Department not found" });
+    }
+
+    res.status(200).json({ message: "✅ Department updated successfully" });
+  } catch (error) {
+    res.status(500).json({ message: "❌ Error updating department", error });
+  }
 });
 
-// 🗑️ DELETE - Eliminar un departamento por ID
-router.delete("/:id", (req, res) => {
-  const id = parseInt(req.params.id);
-  const index = departments.findIndex(dep => dep.id === id);
+// 🗑️ DELETE - Delete a department by ID
+router.delete("/:id", async (req, res) => {
+  const id = req.params.id;
 
-  if (index === -1) {
-    return res.status(404).json({ message: "❌ Department not found" });
+  if (!ObjectId.isValid(id)) {
+    return res.status(400).json({ message: "❌ Invalid department ID" });
   }
 
-  const deleted = departments.splice(index, 1);
-  res.status(200).json({ message: "✅ Department deleted", department: deleted[0] });
+  try {
+    const db = getDatabase();
+    const result = await db.collection("departments").deleteOne({ _id: new ObjectId(id) });
+
+    if (result.deletedCount === 0) {
+      return res.status(404).json({ message: "❌ Department not found" });
+    }
+
+    res.status(200).json({ message: "✅ Department deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ message: "❌ Error deleting department", error });
+  }
 });
 
 module.exports = router;
