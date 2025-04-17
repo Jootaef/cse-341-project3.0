@@ -5,7 +5,7 @@
     "description": "This documentation describes the available endpoints for managing employees and departments.",
     "version": "1.0.0"
   },
-  "host": "localhost:3000",
+  "host": "cse-341-project3-0.onrender.com",
   "basePath": "/",
   "schemes": [
     "http"

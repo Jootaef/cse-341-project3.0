@@ -1,13 +1,15 @@
+// routes/index.js
 const express = require("express");
 const router = express.Router();
 
-// Rutas de Swagger
-// Asegúrate de que esta ruta sirva correctamente el archivo swagger.json
-router.use("/api-docs", require("swagger-ui-express").serve, require("swagger-ui-express").setup(require("../swagger.json")));
+// Swagger documentation route
+const swaggerUi = require("swagger-ui-express");
+const swaggerDocument = require("../swagger.json");
 
-// Rutas de la API
-// Aquí conectamos las subrutas de empleados y departamentos
+router.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+
+// API routes
 router.use("/employees", require("./employee.routes"));
 router.use("/departments", require("./department.routes"));
 
-module.exports = router;
+module.exports = router; // ✅ Esto debe exportar una función router

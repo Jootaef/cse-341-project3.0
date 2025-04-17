@@ -48,9 +48,10 @@ POST http://localhost:3000/departments
 Content-Type: application/json
 
 {
-  "departmentName": "Engineering",
-  "manager": "Juan Pérez"
+  "name": "IT",
+  "description": "Technology and infrastructure department"
 }
+
 
 ### ✏️ Update Existing Department
 PUT http://localhost:3000/departments/PUT_AN_EXISTING_DEPARTMENT_ID_HERE
