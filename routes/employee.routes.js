@@ -53,4 +53,39 @@ router.post("/", async (req, res) => {
   }
 });
 
+// ✅ PUT update employee by ID
+router.put("/:id", async (req, res) => {
+  const db = getDatabase();
+  const { id } = req.params;
+
+  if (!ObjectId.isValid(id)) {
+    return res.status(400).json({ message: "❌ Invalid employee ID" });
+  }
+
+  const updatedEmployee = {
+    firstName: req.body.firstName,
+    lastName: req.body.lastName,
+    departmentId: req.body.departmentId,
+    jobTitle: req.body.jobTitle,
+    salary: req.body.salary,
+    email: req.body.email
+  };
+
+  try {
+    const result = await db.collection("employees").updateOne(
+      { _id: new ObjectId(id) },
+      { $set: updatedEmployee }
+    );
+
+    if (result.matchedCount === 0) {
+      return res.status(404).json({ message: "❌ Employee not found" });
+    }
+
+    res.status(200).json({ message: "✅ Employee updated successfully" });
+  } catch (error) {
+    console.error("❌ Error updating employee:", error);
+    res.status(500).json({ message: "❌ Error updating employee", error });
+  }
+});
+
 module.exports = router;
