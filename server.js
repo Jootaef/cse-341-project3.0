@@ -12,7 +12,7 @@ require("dotenv").config();
 const app = express();
 const port = process.env.PORT || 3000;
 
-// Session setup
+// Middleware: Session
 app.use(
   session({
     secret: process.env.SESSION_SECRET || "supersecret",
@@ -21,13 +21,13 @@ app.use(
   })
 );
 
-// Passport GitHub Strategy
+// Middleware: Passport GitHub Strategy
 passport.use(
   new GithubStrategy(
     {
       clientID: process.env.GITHUB_CLIENT_ID,
       clientSecret: process.env.GITHUB_CLIENT_SECRET,
-      callbackURL: process.env.GITHUB_CALLBACK_URL, // ⚠️ DEBE COINCIDIR EXACTAMENTE con lo de GitHub
+      callbackURL: process.env.GITHUB_CALLBACK_URL,
     },
     function (accessToken, refreshToken, profile, done) {
       return done(null, profile);
@@ -41,33 +41,23 @@ passport.deserializeUser((user, done) => done(null, user));
 app.use(passport.initialize());
 app.use(passport.session());
 
-// CORS y body-parser
+// Middleware: CORS y JSON
 app.use(cors({ origin: "*", methods: ["GET", "POST", "PUT", "DELETE"] }));
 app.use(bodyParser.json());
 
-// Rutas principales
-app.use("/", mainRouter);
+// GitHub OAuth Routes
+app.get("/auth/github", passport.authenticate("github", { scope: ["user:email"] }));
 
-// Ruta para el login con GitHub
-app.get(
-  "/auth/github",
-  passport.authenticate("github", { scope: ["user:email"] })
-);
-
-// Callback después del login con GitHub
 app.get(
   "/auth/github/callback",
-  passport.authenticate("github", {
-    failureRedirect: "/api-docs",
-    session: true,
-  }),
+  passport.authenticate("github", { failureRedirect: "/api-docs", session: true }),
   (req, res) => {
     req.session.user = req.user;
-    res.redirect("/"); // Redirige a donde quieras después del login
+    res.redirect("/");
   }
 );
 
-// Estado actual de la sesión
+// Estado de sesión
 app.get("/", (req, res) => {
   res.send(
     req.session.user
@@ -76,10 +66,13 @@ app.get("/", (req, res) => {
   );
 });
 
-// Swagger Docs
+// Rutas principales
+app.use("/", mainRouter);
+
+// Swagger UI
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(require("./swagger.json")));
 
-// Inicia la conexión a Mongo y el servidor
+// Inicia MongoDB y servidor
 mongodb.initDb((err) => {
   if (err) {
     console.error("❌ Failed to connect to MongoDB", err);
