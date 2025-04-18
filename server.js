@@ -12,7 +12,7 @@ require("dotenv").config();
 const app = express();
 const port = process.env.PORT || 3000;
 
-// 🧠 Session setup
+// Session setup
 app.use(
   session({
     secret: process.env.SESSION_SECRET || "supersecret",
@@ -21,7 +21,7 @@ app.use(
   })
 );
 
-// 🔐 Passport OAuth config
+// Passport OAuth config
 passport.use(
   new GithubStrategy(
     {
@@ -41,17 +41,17 @@ passport.deserializeUser((user, done) => done(null, user));
 app.use(passport.initialize());
 app.use(passport.session());
 
-// 🌐 Middleware
+// Middleware
 app.use(cors({ origin: "*", methods: ["GET", "POST", "PUT", "DELETE"] }));
 app.use(bodyParser.json());
 
-// 📦 Main API routes
+// Routes
 app.use("/", mainRouter);
 
-// 📄 Swagger documentation
+// Swagger
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(require("./swagger.json")));
 
-// 📡 Connect to MongoDB and start server
+// MongoDB connection and server startup
 mongodb.initDb((err) => {
   if (err) {
     console.error("❌ Failed to connect to MongoDB", err);

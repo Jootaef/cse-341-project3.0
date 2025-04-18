@@ -24,6 +24,27 @@
               }
             }
           },
+          "/login": {
+  "get": {
+    "description": "Redirects to GitHub OAuth login",
+    "responses": {
+      "302": {
+        "description": "Redirect to GitHub for authentication"
+      }
+    }
+  }
+},
+"/logout": {
+  "get": {
+    "description": "Logs out the current user",
+    "responses": {
+      "200": {
+        "description": "User logged out successfully"
+      }
+    }
+  }
+},
+
           "500": {
             "description": "Internal Server Error"
           }

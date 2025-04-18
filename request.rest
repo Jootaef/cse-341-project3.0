@@ -36,7 +36,6 @@ Content-Type: application/json
 ### ❌ Delete an Employee
 DELETE http://localhost:3000/employees/PUT_AN_EXISTING_EMPLOYEE_ID_HERE
 
-
 ### 📦 Get All Departments
 GET http://localhost:3000/departments
 
@@ -52,7 +51,6 @@ Content-Type: application/json
   "description": "Technology and infrastructure department"
 }
 
-
 ### ✏️ Update Existing Department
 PUT http://localhost:3000/departments/PUT_AN_EXISTING_DEPARTMENT_ID_HERE
 Content-Type: application/json
@@ -64,3 +62,73 @@ Content-Type: application/json
 
 ### ❌ Delete a Department
 DELETE http://localhost:3000/departments/PUT_AN_EXISTING_DEPARTMENT_ID_HERE
+
+### 👤 Get All Users
+GET http://localhost:3000/users
+
+### 🔍 Get a Single User by ID
+GET http://localhost:3000/users/PUT_AN_EXISTING_USER_ID_HERE
+
+### ➕ Create a New User
+POST http://localhost:3000/users
+Content-Type: application/json
+
+{
+  "firstName": "Laura",
+  "lastName": "Gómez",
+  "email": "laura.gomez@example.com",
+  "favoriteColor": "blue",
+  "birthday": "1995-07-21"
+}
+
+### ✏️ Update Existing User
+PUT http://localhost:3000/users/PUT_AN_EXISTING_USER_ID_HERE
+Content-Type: application/json
+
+{
+  "firstName": "Laura",
+  "lastName": "Gómez",
+  "email": "laura.gomez@example.com",
+  "favoriteColor": "green",
+  "birthday": "1995-07-21"
+}
+
+### ❌ Delete a User
+DELETE http://localhost:3000/users/PUT_AN_EXISTING_USER_ID_HERE
+
+### 📦 Get All Items
+GET http://localhost:3000/items
+
+### 🔍 Get a Single Item by ID
+GET http://localhost:3000/items/PUT_AN_EXISTING_ITEM_ID_HERE
+
+### ➕ Create a New Item
+POST http://localhost:3000/items
+Content-Type: application/json
+
+{
+  "productType": "Food",
+  "productBrand": "HealthyChoice",
+  "productName": "Granola Bar",
+  "weightPerUnit": 100,
+  "pricePerUnit": 1.50,
+  "sellingPrice": 2.00,
+  "expirationDate": "2025-12-31"
+}
+
+### ✏️ Update Existing Item
+PUT http://localhost:3000/items/PUT_AN_EXISTING_ITEM_ID_HERE
+Content-Type: application/json
+
+{
+  "productType": "Food",
+  "productBrand": "HealthyChoice",
+  "productName": "Protein Bar",
+  "weightPerUnit": 120,
+  "pricePerUnit": 1.80,
+  "sellingPrice": 2.50,
+  "expirationDate": "2026-01-31"
+}
+
+### ❌ Delete an Item
+DELETE http://localhost:3000/items/PUT_AN_EXISTING_ITEM_ID_HERE
