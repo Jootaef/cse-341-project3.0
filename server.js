@@ -21,13 +21,13 @@ app.use(
   })
 );
 
-// Passport OAuth config
+// Passport GitHub Strategy
 passport.use(
   new GithubStrategy(
     {
       clientID: process.env.GITHUB_CLIENT_ID,
       clientSecret: process.env.GITHUB_CLIENT_SECRET,
-      callbackURL: process.env.GITHUB_CALLBACK_URL, // ✅ corregido aquí
+      callbackURL: process.env.GITHUB_CALLBACK_URL, // ⚠️ DEBE COINCIDIR EXACTAMENTE con lo de GitHub
     },
     function (accessToken, refreshToken, profile, done) {
       return done(null, profile);
@@ -41,23 +41,51 @@ passport.deserializeUser((user, done) => done(null, user));
 app.use(passport.initialize());
 app.use(passport.session());
 
-// Middleware
+// CORS y body-parser
 app.use(cors({ origin: "*", methods: ["GET", "POST", "PUT", "DELETE"] }));
 app.use(bodyParser.json());
 
-// Routes
+// Rutas principales
 app.use("/", mainRouter);
 
-// Swagger
+// Ruta para el login con GitHub
+app.get(
+  "/auth/github",
+  passport.authenticate("github", { scope: ["user:email"] })
+);
+
+// Callback después del login con GitHub
+app.get(
+  "/auth/github/callback",
+  passport.authenticate("github", {
+    failureRedirect: "/api-docs",
+    session: true,
+  }),
+  (req, res) => {
+    req.session.user = req.user;
+    res.redirect("/"); // Redirige a donde quieras después del login
+  }
+);
+
+// Estado actual de la sesión
+app.get("/", (req, res) => {
+  res.send(
+    req.session.user
+      ? `✅ Logged in as ${req.session.user.username}`
+      : "❌ Not logged in"
+  );
+});
+
+// Swagger Docs
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(require("./swagger.json")));
 
-// MongoDB connection and server startup
+// Inicia la conexión a Mongo y el servidor
 mongodb.initDb((err) => {
   if (err) {
     console.error("❌ Failed to connect to MongoDB", err);
   } else {
     app.listen(port, () => {
-      console.log(`✅ MongoDB connected`);
+      console.log("✅ MongoDB connected");
       console.log(`🚀 Server running at http://localhost:${port}`);
     });
   }
